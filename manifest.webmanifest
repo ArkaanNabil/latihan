@@ -1,0 +1,15 @@
+{
+  "name": "Latihan – Checklist Gym",
+  "short_name": "Latihan",
+  "description": "Checklist latihan gym per kategori: set, repetisi, link tutorial. Offline.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0E1012",
+  "theme_color": "#0E1012",
+  "lang": "id",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

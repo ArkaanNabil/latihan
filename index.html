@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Latihan</title>
+<meta name="description" content="Checklist latihan gym: kategori, gerakan, set, repetisi, link tutorial. Offline, data tersimpan di HP.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Latihan">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#F3F4F6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1012" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F3F4F6; --surface:#FFFFFF; --sunk:#E7E9EC; --ink:#121417; --muted:#666D76; --line:#DDE0E4;
+  --done:#1E9E5A; --done-ink:#FFFFFF; --done-soft:#DDF3E6; --tut:#C62D24; --tut-bg:#FBE4E2; --danger:#D23B2E; --danger-soft:#FBE3E0;
+  --shadow:0 1px 2px rgb(16 18 22 / .06),0 4px 16px rgb(16 18 22 / .06);
+  /* warna piringan beban (standar IWF): merah 25, biru 20, kuning 15, hijau 10, putih 5, hitam */
+  --p-red:#D6322B; --p-blue:#2463D1; --p-yellow:#E0A800; --p-green:#1F8F4E; --p-white:#8A9099; --p-black:#2B2F35;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;
+  --round:"SF Pro Rounded",ui-rounded,-apple-system,system-ui,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0E1012; --surface:#181B1F; --sunk:#22262B; --ink:#EEF0F2; --muted:#9AA1AA; --line:#2A2F35;
+    --done:#3CCB7F; --done-ink:#062312; --done-soft:#143322; --tut:#FF8A80; --tut-bg:#3A1C1A; --danger:#FF6B5E; --danger-soft:#3A1916;
+    --shadow:none; --p-white:#C9CDD2; --p-black:#5A616B;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0E1012; --surface:#181B1F; --sunk:#22262B; --ink:#EEF0F2; --muted:#9AA1AA; --line:#2A2F35;
+  --done:#3CCB7F; --done-ink:#062312; --done-soft:#143322; --tut:#FF8A80; --tut-bg:#3A1C1A; --danger:#FF6B5E; --danger-soft:#3A1916;
+  --shadow:none; --p-white:#C9CDD2; --p-black:#5A616B;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;
+  -webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;touch-action:manipulation}
+:focus-visible{outline:2px solid var(--accent,#2463D1);outline-offset:2px}
+.app{max-width:640px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px calc(env(safe-area-inset-bottom,0px) + 110px);display:flex;flex-direction:column;gap:14px;min-height:100%}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.top h1{margin:0;font-family:var(--round);font-size:30px;font-weight:800;letter-spacing:-.02em}
+.top .date{font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.iconbtn{width:40px;height:40px;border-radius:50%;border:0;background:var(--sunk);display:grid;place-items:center;flex:none}
+.iconbtn svg{width:20px;height:20px}
+
+/* category chips */
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:2px 16px 4px;scroll-snap-type:x proximity}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;display:flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:9px 14px;background:var(--surface);box-shadow:var(--shadow);font-weight:650;font-size:15px;scroll-snap-align:start;white-space:nowrap}
+.chip .plate{width:12px;height:12px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 3px rgb(0 0 0 / .18)}
+.chip .cnt{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.chip[aria-selected="true"]{background:var(--c);color:var(--ci,#fff)}
+.chip[aria-selected="true"] .plate{background:var(--ci,#fff)}
+.chip[aria-selected="true"] .cnt{color:var(--ci,#fff);opacity:.8}
+.chip.add{background:transparent;box-shadow:none;border:1.5px dashed var(--line);color:var(--muted)}
+
+/* category hero */
+.hero{background:var(--surface);border-radius:20px;padding:16px;box-shadow:var(--shadow);display:flex;gap:14px;align-items:center;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c)}
+.ring{--p:0;width:64px;height:64px;flex:none;border-radius:50%;display:grid;place-items:center;
+  background:conic-gradient(var(--c) calc(var(--p)*1turn),var(--sunk) 0)}
+.ring span{width:50px;height:50px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums;font-family:var(--round)}
+.hero .info{flex:1;min-width:0}
+.hero h2{margin:0;font-family:var(--round);font-size:22px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hero p{margin:2px 0 0;color:var(--muted);font-size:14px}
+
+/* exercise list */
+.list{display:flex;flex-direction:column;gap:10px}
+.ex{background:var(--surface);border-radius:18px;padding:14px;box-shadow:var(--shadow);display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 12px;align-items:start;transition:opacity .2s}
+.ex.is-done{opacity:.72}
+.check{width:32px;height:32px;border-radius:50%;border:2.5px solid var(--line);background:transparent;display:grid;place-items:center;margin-top:1px;padding:0}
+.check svg{width:18px;height:18px;opacity:0;transform:scale(.6);transition:all .15s}
+.ex.is-done .check{background:var(--done);border-color:var(--done)}
+.ex.is-done .check svg{opacity:1;transform:none;color:var(--done-ink)}
+.ex .name{font-weight:700;font-size:17px;line-height:1.25;word-break:break-word}
+.ex.is-done .name{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:var(--muted)}
+.ex .meta{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.ex .meta b{color:var(--ink);font-weight:700}
+.ex .note{font-size:14px;color:var(--muted);white-space:pre-wrap;word-break:break-word}
+.ex .body{display:flex;flex-direction:column;gap:6px;min-width:0}
+.sets{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.set{min-width:38px;height:38px;border-radius:12px;border:0;background:var(--sunk);font-weight:750;font-size:14px;font-variant-numeric:tabular-nums;padding:0 8px;display:flex;align-items:center;justify-content:center;gap:4px}
+.set.on{background:var(--done);color:var(--done-ink)}
+.set small{font-weight:600;opacity:.75;font-size:11px}
+.row-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.pill{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:7px 12px;background:var(--sunk);font-size:14px;font-weight:650;color:var(--ink);text-decoration:none;max-width:100%}
+.pill svg{width:16px;height:16px;flex:none}
+.pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill.tut{background:var(--tut-bg);color:var(--tut)}
+.editbtn{width:34px;height:34px;border-radius:50%;border:0;background:transparent;color:var(--muted);display:grid;place-items:center}
+.editbtn svg{width:20px;height:20px}
+.order{display:flex;flex-direction:column;gap:4px}
+.order button{width:34px;height:30px;border-radius:10px;border:0;background:var(--sunk);display:grid;place-items:center}
+.order button:disabled{opacity:.3}
+.order svg{width:16px;height:16px}
+
+.empty{text-align:center;color:var(--muted);padding:36px 16px;display:flex;flex-direction:column;gap:10px;align-items:center}
+.empty b{color:var(--ink);font-size:17px}
+
+/* bottom bar */
+.bottom{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(env(safe-area-inset-bottom,0px) + 12px);
+  background:linear-gradient(to top,var(--bg) 70%,color-mix(in srgb,var(--bg) 0%,transparent));display:flex;justify-content:center;pointer-events:none}
+.bottom .inner{max-width:608px;width:100%;display:flex;gap:10px;pointer-events:auto}
+.btn{flex:1;border:0;border-radius:16px;padding:15px 12px;white-space:nowrap;font-weight:750;font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn svg{width:20px;height:20px}
+.btn.primary{background:var(--c,#2463D1);color:var(--ci,#fff)}
+.btn.finish{background:var(--done);color:var(--done-ink)}
+.btn.soft{background:var(--sunk)}
+.btn.danger{background:var(--danger-soft);color:var(--danger)}
+.btn.danger.armed{background:var(--danger);color:#fff}
+
+/* sheets */
+.scrim{position:fixed;inset:0;background:rgb(0 0 0 / .38);z-index:20;opacity:0;transition:opacity .2s}
+.scrim.show{opacity:1}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--surface);border-radius:22px 22px 0 0;max-height:92%;overflow-y:auto;
+  padding:8px 16px calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateY(100%);transition:transform .25s cubic-bezier(.2,.8,.2,1);max-width:640px;margin:0 auto}
+.sheet.show{transform:none}
+.grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 10px}
+.sheet h3{margin:0 0 14px;font-family:var(--round);font-size:21px;font-weight:800}
+.form{display:flex;flex-direction:column;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field>span{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.field input,.field textarea{width:100%;border:0;border-radius:12px;background:var(--sunk);padding:12px 14px;font-size:17px;min-width:0}
+.field textarea{min-height:70px;resize:vertical}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.stepper{display:flex;align-items:center;background:var(--sunk);border-radius:12px;overflow:hidden}
+.stepper button{width:40px;height:46px;border:0;background:transparent;font-size:22px;font-weight:600;flex:none}
+.stepper input{background:transparent!important;text-align:center;padding:12px 0!important;font-weight:750;font-variant-numeric:tabular-nums;border-radius:0!important}
+.colors{display:flex;gap:12px;flex-wrap:wrap}
+.swatch{width:44px;height:44px;border-radius:50%;border:0;background:var(--c);display:grid;place-items:center;box-shadow:inset 0 0 0 4px rgb(255 255 255 / .18)}
+.swatch[aria-pressed="true"]{box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--c)}
+.swatch small{color:#fff;font-size:11px;font-weight:800}
+.err{color:var(--danger);font-size:14px;margin:0}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+.menu{display:flex;flex-direction:column;background:var(--sunk);border-radius:14px;overflow:hidden}
+.menu button{border:0;background:transparent;text-align:left;padding:14px 16px;font-size:16px;font-weight:600;display:flex;align-items:center;gap:12px;border-top:1px solid var(--line)}
+.menu button:first-child{border-top:0}
+.menu button svg{width:20px;height:20px;color:var(--muted)}
+.menu button.danger{color:var(--danger)} .menu button.danger svg{color:var(--danger)}
+.menu button.armed{background:var(--danger);color:#fff} .menu button.armed svg{color:#fff}
+.section-t{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:18px 0 8px}
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.hist li{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:15px}
+.hist li:first-child{border-top:0}
+.hist .d{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.hint{font-size:13px;color:var(--muted);margin:6px 0 0}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 96px);transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:650;font-size:14px;opacity:0;transition:all .2s;z-index:30;pointer-events:none;max-width:90%;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.filebtn{position:relative;overflow:hidden}
+.filebtn input{position:absolute;inset:0;opacity:0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <div>
+      <div class="date" id="today"></div>
+      <h1>Latihan</h1>
+    </div>
+    <button class="iconbtn" id="openSettings" aria-label="Pengaturan & riwayat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+    </button>
+  </header>
+
+  <nav class="chips" id="chips" role="tablist" aria-label="Kategori latihan"></nav>
+
+  <section class="hero" id="hero">
+    <div class="ring" id="ring"><span id="ringTxt">0/0</span></div>
+    <div class="info">
+      <h2 id="catName"></h2>
+      <p id="catSub"></p>
+    </div>
+    <button class="iconbtn" id="catMenuBtn" aria-label="Menu kategori">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+    </button>
+  </section>
+
+  <div class="list" id="list"></div>
+</div>
+
+<div class="bottom">
+  <div class="inner">
+    <button class="btn finish" id="finishBtn" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      <span id="finishTxt">Selesai latihan</span>
+    </button>
+    <button class="btn primary" id="addExBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Gerakan
+    </button>
+  </div>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+
+<!-- sheet: exercise -->
+<section class="sheet" id="exSheet" role="dialog" aria-modal="true" aria-labelledby="exTitle" hidden>
+  <div class="grab"></div>
+  <h3 id="exTitle">Tambah gerakan</h3>
+  <form class="form" id="exForm" novalidate>
+    <label class="field"><span>Nama gerakan</span><input id="exName" maxlength="60" placeholder="mis. Lat Pulldown" autocomplete="off" enterkeyhint="next"></label>
+    <div class="grid3">
+      <label class="field"><span>Set</span>
+        <div class="stepper"><button type="button" data-step="-1" aria-label="Kurangi set">−</button><input id="exSets" inputmode="numeric" value="3" aria-label="Jumlah set"><button type="button" data-step="1" aria-label="Tambah set">+</button></div>
+      </label>
+      <label class="field"><span>Reps</span><input id="exReps" inputmode="text" maxlength="12" placeholder="8-12"></label>
+      <label class="field"><span>Beban</span><input id="exWeight" maxlength="14" placeholder="40 kg"></label>
+    </div>
+    <label class="field"><span>Link tutorial</span><input id="exLink" type="url" inputmode="url" autocapitalize="off" autocorrect="off" placeholder="https://youtube.com/…"></label>
+    <label class="field"><span>Catatan</span><textarea id="exNote" maxlength="300" placeholder="mis. tempo 3 detik turun, istirahat 90 detik"></textarea></label>
+    <p class="err" id="exErr" hidden></p>
+    <div class="btnrow">
+      <button type="button" class="btn soft" id="exCancel">Batal</button>
+      <button type="submit" class="btn primary" id="exSave">Simpan</button>
+    </div>
+    <button type="button" class="btn danger" id="exDelete" hidden>Hapus gerakan</button>
+  </form>
+</section>
+
+<!-- sheet: category -->
+<section class="sheet" id="catSheet" role="dialog" aria-modal="true" aria-labelledby="catTitle" hidden>
+  <div class="grab"></div>
+  <h3 id="catTitle">Kategori baru</h3>
+  <form class="form" id="catForm" novalidate>
+    <label class="field"><span>Nama</span><input id="catNameIn" maxlength="30" placeholder="mis. Upper Body" autocomplete="off"></label>
+    <div class="field"><span>Warna piringan</span><div class="colors" id="colors"></div></div>
+    <p class="err" id="catErr" hidden></p>
+    <div class="btnrow">
+      <button type="button" class="btn soft" id="catCancel">Batal</button>
+      <button type="submit" class="btn primary" id="catSave">Simpan</button>
+    </div>
+  </form>
+  <div id="catExtra" hidden>
+    <div class="section-t">Lainnya</div>
+    <div class="menu">
+      <button type="button" id="reorderBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg><span>Atur urutan gerakan</span></button>
+      <button type="button" id="resetBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span>Hapus semua centang (tanpa simpan)</span></button>
+      <button type="button" id="moveLeftBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg><span>Geser kategori ke kiri</span></button>
+      <button type="button" class="danger" id="delCatBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg><span id="delCatTxt">Hapus kategori</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- sheet: settings -->
+<section class="sheet" id="setSheet" role="dialog" aria-modal="true" aria-labelledby="setTitle" hidden>
+  <div class="grab"></div>
+  <h3 id="setTitle">Riwayat & data</h3>
+  <div class="section-t">Riwayat latihan</div>
+  <ul class="hist" id="hist"></ul>
+  <div class="section-t">Backup</div>
+  <div class="btnrow">
+    <button type="button" class="btn soft" id="exportBtn">Simpan backup</button>
+    <label class="btn soft filebtn">Pulihkan backup<input type="file" id="importIn" accept=".json,application/json"></label>
+  </div>
+  <p class="hint">Data hanya tersimpan di HP ini. Simpan backup sesekali (misalnya ke Files / iCloud Drive) supaya aman kalau aplikasinya terhapus.</p>
+  <p class="hint" id="storageInfo"></p>
+  <div class="btnrow" style="margin-top:16px"><button type="button" class="btn soft" id="setClose">Tutup</button></div>
+</section>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const KEY = 'latihan.v1';
+  const PLATES = [
+    { key:'red', label:'25' }, { key:'blue', label:'20' }, { key:'yellow', label:'15' },
+    { key:'green', label:'10' }, { key:'white', label:'5' }, { key:'black', label:'' }
+  ];
+  const HARI = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+  const BULAN = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+  const cvar = k => 'var(--p-' + k + ')';
+  const cink = k => (k === 'yellow' || k === 'white') ? '#16181B' : '#FFFFFF';
+  const fmtDate = iso => { const d = new Date(iso); return HARI[d.getDay()] + ', ' + d.getDate() + ' ' + BULAN[d.getMonth()]; };
+  const esc = s => String(s ?? '');
+
+  // ---------- data ----------
+  function starter(){
+    return {
+      version: 1,
+      activeId: null,
+      categories: [
+        { id: uid(), name:'Push Day', color:'red', lastDone:null, exercises:[] },
+        { id: uid(), name:'Pull Day', color:'blue', lastDone:null, exercises:[] },
+        { id: uid(), name:'Leg Day', color:'yellow', lastDone:null, exercises:[] }
+      ],
+      history: []
+    };
+  }
+  function load(){
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw){ const d = JSON.parse(raw); if (d && Array.isArray(d.categories)) return sanitize(d); }
+    } catch(_){}
+    return starter();
+  }
+  function sanitize(d){
+    d.history = Array.isArray(d.history) ? d.history : [];
+    d.categories.forEach(c => {
+      c.id = c.id || uid(); c.name = esc(c.name).slice(0,30) || 'Kategori';
+      c.color = PLATES.some(p => p.key === c.color) ? c.color : 'red';
+      c.exercises = Array.isArray(c.exercises) ? c.exercises : [];
+      c.exercises.forEach(e => {
+        e.id = e.id || uid(); e.sets = Math.min(20, Math.max(1, parseInt(e.sets,10) || 1));
+        e.done = Array.from({ length: e.sets }, (_, i) => !!(e.done && e.done[i]));
+        ['name','reps','weight','link','note'].forEach(k => e[k] = esc(e[k]));
+      });
+    });
+    if (!d.categories.some(c => c.id === d.activeId)) d.activeId = d.categories[0]?.id || null;
+    return d;
+  }
+  let state = load();
+  if (!state.activeId) state.activeId = state.categories[0]?.id || null;
+  let saveOk = true;
+  function save(){
+    try { localStorage.setItem(KEY, JSON.stringify(state)); saveOk = true; }
+    catch(_){ if (saveOk) toast('Gagal menyimpan di HP ini. Coba buka dari Home Screen.'); saveOk = false; }
+  }
+  // minta browser agar data tidak dihapus otomatis
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+
+  const active = () => state.categories.find(c => c.id === state.activeId) || null;
+  const isDone = e => e.done.length > 0 && e.done.every(Boolean);
+  const touched = c => c && c.exercises.some(e => e.done.some(Boolean));
+
+  // ---------- toast ----------
+  let tt; function toast(msg){ const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200); }
+
+  // ---------- render ----------
+  let reorder = false;
+  function render(){
+    const d = new Date(); $('today').textContent = HARI[d.getDay()] + ', ' + d.getDate() + ' ' + BULAN[d.getMonth()];
+    renderChips(); renderHero(); renderList(); renderBottom();
+  }
+  function renderChips(){
+    const box = $('chips'); box.replaceChildren();
+    state.categories.forEach(c => {
+      const b = document.createElement('button');
+      b.className = 'chip'; b.setAttribute('role','tab'); b.style.setProperty('--c', cvar(c.color)); b.style.setProperty('--ci', cink(c.color));
+      b.setAttribute('aria-selected', String(c.id === state.activeId));
+      const done = c.exercises.filter(isDone).length;
+      const dot = document.createElement('span'); dot.className = 'plate';
+      const nm = document.createElement('span'); nm.textContent = c.name;
+      const ct = document.createElement('span'); ct.className = 'cnt'; ct.textContent = done ? done + '/' + c.exercises.length : c.exercises.length;
+      b.append(dot, nm, ct);
+      b.addEventListener('click', () => { state.activeId = c.id; reorder = false; save(); render(); });
+      box.append(b);
+    });
+    const add = document.createElement('button'); add.className = 'chip add'; add.textContent = '+ Kategori';
+    add.addEventListener('click', () => openCat(null));
+    box.append(add);
+    const sel = box.querySelector('[aria-selected="true"]'); if (sel) sel.scrollIntoView({ block:'nearest', inline:'nearest' });
+  }
+  function renderHero(){
+    const c = active(); const hero = $('hero');
+    if (!c){ hero.hidden = true; return; }
+    hero.hidden = false;
+    document.documentElement.style.setProperty('--c', cvar(c.color));
+    document.documentElement.style.setProperty('--ci', cink(c.color));
+    hero.style.setProperty('--c', cvar(c.color));
+    const total = c.exercises.length, done = c.exercises.filter(isDone).length;
+    $('ring').style.setProperty('--p', total ? done / total : 0);
+    $('ringTxt').textContent = done + '/' + total;
+    $('catName').textContent = c.name;
+    const setsTotal = c.exercises.reduce((s,e) => s + e.sets, 0), setsDone = c.exercises.reduce((s,e) => s + e.done.filter(Boolean).length, 0);
+    let sub = total ? setsDone + ' dari ' + setsTotal + ' set' : 'Belum ada gerakan';
+    if (c.lastDone) sub += ' · terakhir ' + fmtDate(c.lastDone);
+    $('catSub').textContent = sub;
+  }
+  const ICON = {
+    check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+    play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+    edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+    up:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg>',
+    down:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>'
+  };
+  function linkLabel(url){
+    try { const h = new URL(url).hostname.replace(/^www\.|^m\./,''); return /youtu/.test(h) ? 'YouTube' : /tiktok/.test(h) ? 'TikTok' : /instagram/.test(h) ? 'Instagram' : h; }
+    catch(_){ return 'Tutorial'; }
+  }
+  function renderList(){
+    const box = $('list'); box.replaceChildren();
+    const c = active();
+    if (!c){
+      box.innerHTML = '<div class="empty"><b>Belum ada kategori</b><span>Tambah kategori seperti Push Day atau Leg Day.</span></div>';
+      return;
+    }
+    if (reorder){
+      const bar = document.createElement('button'); bar.className = 'btn soft'; bar.textContent = 'Selesai mengatur urutan';
+      bar.addEventListener('click', () => { reorder = false; render(); });
+      box.append(bar);
+    }
+    if (!c.exercises.length){
+      const e = document.createElement('div'); e.className = 'empty';
+      e.innerHTML = '<b>Belum ada gerakan</b><span>Tekan “+ Gerakan” untuk menambahkan latihan ke ' + '</span>';
+      e.querySelector('span').append(c.name + '.');
+      box.append(e); return;
+    }
+    c.exercises.forEach((ex, idx) => {
+      const card = document.createElement('article');
+      card.className = 'ex' + (isDone(ex) ? ' is-done' : '');
+      // checkbox
+      const chk = document.createElement('button'); chk.className = 'check'; chk.innerHTML = ICON.check;
+      chk.setAttribute('role','checkbox'); chk.setAttribute('aria-checked', String(isDone(ex)));
+      chk.setAttribute('aria-label', 'Tandai ' + ex.name + ' selesai');
+      chk.addEventListener('click', () => { const v = !isDone(ex); ex.done = ex.done.map(() => v); after(c, ex, v); });
+      // body
+      const body = document.createElement('div'); body.className = 'body';
+      const nm = document.createElement('div'); nm.className = 'name'; nm.textContent = ex.name;
+      const meta = document.createElement('div'); meta.className = 'meta';
+      const b1 = document.createElement('b'); b1.textContent = ex.sets + ' set';
+      meta.append(b1);
+      if (ex.reps){ meta.append(' × '); const b2 = document.createElement('b'); b2.textContent = ex.reps + ' reps'; meta.append(b2); }
+      if (ex.weight){ meta.append(' · ' + ex.weight); }
+      body.append(nm, meta);
+      if (!reorder){
+        const sets = document.createElement('div'); sets.className = 'sets';
+        ex.done.forEach((on, i) => {
+          const s = document.createElement('button'); s.className = 'set' + (on ? ' on' : '');
+          s.setAttribute('aria-pressed', String(on)); s.setAttribute('aria-label', 'Set ' + (i+1) + (on ? ' selesai' : ''));
+          const sm = document.createElement('small'); sm.textContent = 'S';
+          s.append(sm, document.createTextNode(String(i+1)));
+          s.addEventListener('click', () => { ex.done[i] = !ex.done[i]; after(c, ex, ex.done[i]); });
+          sets.append(s);
+        });
+        body.append(sets);
+      }
+      if (ex.note){ const n = document.createElement('div'); n.className = 'note'; n.textContent = ex.note; body.append(n); }
+      if (ex.link && !reorder){
+        const acts = document.createElement('div'); acts.className = 'row-actions';
+        const a = document.createElement('a'); a.className = 'pill tut'; a.href = ex.link; a.target = '_blank'; a.rel = 'noopener';
+        a.innerHTML = ICON.play; const sp = document.createElement('span'); sp.textContent = 'Tutorial · ' + linkLabel(ex.link); a.append(sp);
+        acts.append(a); body.append(acts);
+      }
+      // right side
+      let right;
+      if (reorder){
+        right = document.createElement('div'); right.className = 'order';
+        const up = document.createElement('button'); up.innerHTML = ICON.up; up.setAttribute('aria-label','Naikkan ' + ex.name); up.disabled = idx === 0;
+        const dn = document.createElement('button'); dn.innerHTML = ICON.down; dn.setAttribute('aria-label','Turunkan ' + ex.name); dn.disabled = idx === c.exercises.length - 1;
+        up.addEventListener('click', () => { move(c.exercises, idx, -1); save(); render(); });
+        dn.addEventListener('click', () => { move(c.exercises, idx, 1); save(); render(); });
+        right.append(up, dn);
+      } else {
+        right = document.createElement('button'); right.className = 'editbtn'; right.innerHTML = ICON.edit;
+        right.setAttribute('aria-label', 'Ubah ' + ex.name);
+        right.addEventListener('click', () => openEx(ex));
+      }
+      card.append(chk, body, right);
+      box.append(card);
+    });
+  }
+  function move(arr, i, d){ const j = i + d; if (j < 0 || j >= arr.length) return; [arr[i], arr[j]] = [arr[j], arr[i]]; }
+  function after(c, ex, turnedOn){
+    save(); render();
+    if (turnedOn && navigator.vibrate) navigator.vibrate(10);
+    if (turnedOn && c.exercises.length && c.exercises.every(isDone)) toast('Semua gerakan ' + c.name + ' selesai 💪');
+  }
+
+  // ---------- finish session ----------
+  let finishArmed = false, finishTimer;
+  function renderBottom(){
+    const c = active(); const fb = $('finishBtn');
+    fb.hidden = !touched(c) || reorder;
+    $('addExBtn').hidden = !c || reorder;
+    if (!finishArmed) $('finishTxt').textContent = 'Selesai latihan';
+  }
+  $('finishBtn').addEventListener('click', () => {
+    const c = active(); if (!c) return;
+    if (!finishArmed){
+      finishArmed = true;
+      const done = c.exercises.filter(isDone).length;
+      $('finishTxt').textContent = 'Simpan ' + done + '/' + c.exercises.length + ' & reset?';
+      clearTimeout(finishTimer); finishTimer = setTimeout(() => { finishArmed = false; renderBottom(); }, 3500);
+      return;
+    }
+    finishArmed = false; clearTimeout(finishTimer);
+    const now = new Date().toISOString();
+    state.history.unshift({
+      date: now, categoryId: c.id, category: c.name,
+      done: c.exercises.filter(isDone).length, total: c.exercises.length,
+      sets: c.exercises.reduce((s,e) => s + e.done.filter(Boolean).length, 0)
+    });
+    state.history = state.history.slice(0, 200);
+    c.lastDone = now;
+    c.exercises.forEach(e => e.done = e.done.map(() => false));
+    save(); render(); toast('Latihan disimpan ke riwayat');
+  });
+
+  // ---------- sheets ----------
+  let openSheet = null;
+  function show(sheet){
+    openSheet = sheet; $('scrim').hidden = false; sheet.hidden = false;
+    requestAnimationFrame(() => { $('scrim').classList.add('show'); sheet.classList.add('show'); });
+  }
+  function hide(){
+    if (!openSheet) return; const s = openSheet; openSheet = null;
+    $('scrim').classList.remove('show'); s.classList.remove('show');
+    setTimeout(() => { s.hidden = true; if (!openSheet) $('scrim').hidden = true; }, 230);
+    disarmAll();
+  }
+  $('scrim').addEventListener('click', hide);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') hide(); });
+
+  // exercise sheet
+  let editing = null;
+  function openEx(ex){
+    editing = ex;
+    $('exTitle').textContent = ex ? 'Ubah gerakan' : 'Tambah ke ' + (active()?.name || '');
+    $('exName').value = ex ? ex.name : '';
+    $('exSets').value = ex ? ex.sets : 3;
+    $('exReps').value = ex ? ex.reps : '';
+    $('exWeight').value = ex ? ex.weight : '';
+    $('exLink').value = ex ? ex.link : '';
+    $('exNote').value = ex ? ex.note : '';
+    $('exDelete').hidden = !ex; $('exErr').hidden = true;
+    show($('exSheet'));
+    if (!ex) setTimeout(() => $('exName').focus(), 260);
+  }
+  $('addExBtn').addEventListener('click', () => { if (active()) openEx(null); });
+  $('exCancel').addEventListener('click', hide);
+  document.querySelectorAll('.stepper button').forEach(b => b.addEventListener('click', () => {
+    const inp = $('exSets'); inp.value = Math.min(20, Math.max(1, (parseInt(inp.value,10) || 1) + (+b.dataset.step)));
+  }));
+  function normLink(v){
+    v = v.trim(); if (!v) return '';
+    if (!/^https?:\/\//i.test(v)) v = 'https://' + v;
+    try { const u = new URL(v); return /\./.test(u.hostname) ? u.href : null; } catch(_){ return null; }
+  }
+  $('exForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const c = active(); if (!c) return;
+    const name = $('exName').value.trim();
+    const sets = Math.min(20, Math.max(1, parseInt($('exSets').value,10) || 0));
+    const link = normLink($('exLink').value);
+    const err = m => { $('exErr').textContent = m; $('exErr').hidden = false; };
+    if (!name) return err('Isi nama gerakan.');
+    if (!parseInt($('exSets').value,10)) return err('Jumlah set minimal 1.');
+    if (link === null) return err('Link tutorial tidak valid. Contoh: https://youtube.com/watch?v=…');
+    const data = { name, sets, reps: $('exReps').value.trim(), weight: $('exWeight').value.trim(), link, note: $('exNote').value.trim() };
+    if (editing){
+      const old = editing.done;
+      Object.assign(editing, data);
+      editing.done = Array.from({ length: sets }, (_, i) => !!old[i]);
+    } else {
+      c.exercises.push(Object.assign({ id: uid(), done: Array(sets).fill(false) }, data));
+    }
+    save(); hide(); render();
+    toast(editing ? 'Gerakan diperbarui' : name + ' ditambahkan');
+  });
+  let exDelArmed = false;
+  $('exDelete').addEventListener('click', () => {
+    const btn = $('exDelete');
+    if (!exDelArmed){ exDelArmed = true; btn.classList.add('armed'); btn.textContent = 'Tekan lagi untuk hapus'; return; }
+    const c = active(); c.exercises = c.exercises.filter(x => x !== editing);
+    save(); hide(); render(); toast('Gerakan dihapus');
+  });
+
+  // category sheet
+  let editingCat = null, pickColor = 'red';
+  function renderColors(){
+    const box = $('colors'); box.replaceChildren();
+    PLATES.forEach(p => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'swatch'; b.style.setProperty('--c', cvar(p.key));
+      b.setAttribute('aria-pressed', String(p.key === pickColor)); b.setAttribute('aria-label','Warna ' + p.key);
+      if (p.label){ const s = document.createElement('small'); s.textContent = p.label; b.append(s); }
+      b.addEventListener('click', () => { pickColor = p.key; renderColors(); });
+      box.append(b);
+    });
+  }
+  function openCat(c){
+    editingCat = c;
+    $('catTitle').textContent = c ? 'Ubah kategori' : 'Kategori baru';
+    $('catNameIn').value = c ? c.name : '';
+    const used = new Set(state.categories.map(x => x.color));
+    pickColor = c ? c.color : (PLATES.find(p => !used.has(p.key)) || PLATES[0]).key;
+    renderColors();
+    $('catExtra').hidden = !c; $('catErr').hidden = true;
+    if (c){
+      $('reorderBtn').hidden = c.exercises.length < 2;
+      $('resetBtn').hidden = !touched(c);
+      $('moveLeftBtn').hidden = state.categories.indexOf(c) === 0;
+      $('delCatTxt').textContent = c.exercises.length ? 'Hapus kategori & ' + c.exercises.length + ' gerakan' : 'Hapus kategori';
+    }
+    show($('catSheet'));
+    if (!c) setTimeout(() => $('catNameIn').focus(), 260);
+  }
+  $('catMenuBtn').addEventListener('click', () => { const c = active(); if (c) openCat(c); });
+  $('catCancel').addEventListener('click', hide);
+  $('catForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = $('catNameIn').value.trim();
+    if (!name){ $('catErr').textContent = 'Isi nama kategori.'; $('catErr').hidden = false; return; }
+    if (editingCat){ editingCat.name = name; editingCat.color = pickColor; }
+    else { const c = { id: uid(), name, color: pickColor, lastDone: null, exercises: [] }; state.categories.push(c); state.activeId = c.id; }
+    save(); hide(); render();
+  });
+  $('reorderBtn').addEventListener('click', () => { reorder = true; hide(); render(); });
+  $('resetBtn').addEventListener('click', () => { const c = editingCat; c.exercises.forEach(e => e.done = e.done.map(() => false)); save(); hide(); render(); toast('Centang dihapus'); });
+  $('moveLeftBtn').addEventListener('click', () => { const i = state.categories.indexOf(editingCat); move(state.categories, i, -1); save(); hide(); render(); });
+  let catDelArmed = false;
+  $('delCatBtn').addEventListener('click', () => {
+    const btn = $('delCatBtn');
+    if (!catDelArmed){ catDelArmed = true; btn.classList.add('armed'); $('delCatTxt').textContent = 'Tekan lagi untuk hapus ' + editingCat.name; return; }
+    state.categories = state.categories.filter(c => c !== editingCat);
+    state.activeId = state.categories[0]?.id || null;
+    save(); hide(); render(); toast('Kategori dihapus');
+  });
+  function disarmAll(){
+    exDelArmed = false; catDelArmed = false;
+    $('exDelete').classList.remove('armed'); $('exDelete').textContent = 'Hapus gerakan';
+    $('delCatBtn').classList.remove('armed');
+  }
+
+  // settings sheet
+  function renderHistory(){
+    const ul = $('hist'); ul.replaceChildren();
+    if (!state.history.length){ const li = document.createElement('li'); li.textContent = 'Belum ada. Tekan “Selesai latihan” setelah selesai di gym.'; li.style.color = 'var(--muted)'; ul.append(li); return; }
+    state.history.slice(0, 30).forEach(h => {
+      const li = document.createElement('li');
+      const l = document.createElement('span'); l.textContent = h.category + ' · ' + h.done + '/' + h.total + ' gerakan, ' + h.sets + ' set';
+      const r = document.createElement('span'); r.className = 'd'; r.textContent = fmtDate(h.date);
+      li.append(l, r); ul.append(li);
+    });
+  }
+  $('openSettings').addEventListener('click', async () => {
+    renderHistory();
+    let info = '';
+    try {
+      if (navigator.storage && navigator.storage.persisted){ info = (await navigator.storage.persisted()) ? 'Penyimpanan permanen aktif.' : ''; }
+    } catch(_){}
+    const standalone = window.navigator.standalone || matchMedia('(display-mode: standalone)').matches;
+    if (!standalone) info += (info ? ' ' : '') + 'Tip: pasang ke Home Screen (Share → Add to Home Screen) agar bisa dibuka offline seperti aplikasi.';
+    $('storageInfo').textContent = info;
+    show($('setSheet'));
+  });
+  $('setClose').addEventListener('click', hide);
+  $('exportBtn').addEventListener('click', async () => {
+    const d = new Date(); const name = 'latihan-backup-' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + '.json';
+    const blob = new Blob([JSON.stringify(state, null, 1)], { type:'application/json' });
+    try {
+      const file = new File([blob], name, { type:'application/json' });
+      if (navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file], title:'Backup Latihan' }); return; }
+    } catch(err){ if (err && err.name === 'AbortError') return; }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  });
+  $('importIn').addEventListener('change', e => {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const d = JSON.parse(r.result);
+        if (!d || !Array.isArray(d.categories)) throw 0;
+        state = sanitize(d); save(); hide(); render();
+        toast('Backup dipulihkan: ' + state.categories.length + ' kategori');
+      } catch(_){ toast('File bukan backup Latihan yang valid'); }
+      e.target.value = '';
+    };
+    r.readAsText(f);
+  });
+
+  // ---------- boot ----------
+  render();
+  save();
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')){
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>
